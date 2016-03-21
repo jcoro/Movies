@@ -1,0 +1,44 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+    </style>
+
+    <style name="DetailTitleText">
+        <item name="android:textSize">@dimen/font_xlarge</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:padding">@dimen/spacing_large</item>
+        <item name="android:background">@color/teal</item>
+    </style>
+
+    <style name="DetailMoviePosterImage">
+        <item name="android:padding">@dimen/spacing_normal</item>
+        <item name="android:scaleType">fitCenter</item>
+    </style>
+
+    <style name="DetailMovieReleaseYearText">
+        <item name="android:paddingTop">@dimen/spacing_small</item>
+        <item name="android:paddingBottom">@dimen/spacing_small</item>
+        <item name="android:textSize">@dimen/font_large</item>
+        <item name="android:textColor">@color/gray_dark</item>
+    </style>
+
+    <style name="DetailMovieRatingText">
+        <item name="android:paddingBottom">@dimen/spacing_small</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/gray_dark</item>
+    </style>
+
+    <style name="DetailMovieOverviewText">
+        <item name="android:padding">@dimen/spacing_normal</item>
+        <item name="android:textColor">@color/gray_dark</item>
+    </style>
+
+    <style name="Divider">
+        <item name="android:background">@color/gray_dark</item>
+        <item name="android:layout_marginLeft">@dimen/spacing_normal</item>
+        <item name="android:layout_marginRight">@dimen/spacing_normal</item>
+    </style>
+
+</resources>

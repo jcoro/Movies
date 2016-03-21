@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/detail_text"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".DetailFragment"
+    >
+
+    <TextView
+        android:id="@+id/detail_movie_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="@style/DetailTitleText"
+        />
+
+        <ImageView
+            android:id="@+id/detail_movie_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/detail_movie_title"
+            android:contentDescription="@string/movie_poster_image"
+            style="@style/DetailMoviePosterImage"
+            />
+        <TextView
+            android:id="@+id/detail_movie_release_year"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/detail_movie_title"
+            android:layout_toRightOf="@id/detail_movie_image"
+            android:layout_toEndOf="@id/detail_movie_image"
+            style="@style/DetailMovieReleaseYearText"
+            />
+        <TextView
+            android:id="@+id/detail_movie_rating"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/detail_movie_release_year"
+            android:layout_toRightOf="@id/detail_movie_image"
+            android:layout_toEndOf="@id/detail_movie_image"
+            style="@style/DetailMovieRatingText"
+            />
+        <TextView
+            android:id="@+id/detail_movie_overview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/detail_movie_image"
+            style="@style/DetailMovieOverviewText"
+            />
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/spacing_single"
+            android:layout_below="@id/detail_movie_overview"
+            android:contentDescription="@string/divider"
+            style="@style/Divider"
+            />
+</RelativeLayout>
