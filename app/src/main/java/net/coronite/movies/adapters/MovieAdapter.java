@@ -1,4 +1,4 @@
-package net.coronite.movies;
+package net.coronite.movies.adapters;
 
 import android.app.Activity;
 import android.view.LayoutInflater;
@@ -9,11 +9,22 @@ import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
 
+import net.coronite.movies.R;
+import net.coronite.movies.model.MovieItem;
+
 /**
  * The {@code MovieAdapter} is a subclass of {@code ArrayAdapter} for displaying movie posters in a
- * grid layout.
+ * gridView.
  */
 public class MovieAdapter extends ArrayAdapter<MovieItem> {
+
+    public static class ViewHolder {
+        public final ImageView posterView;
+
+        public ViewHolder(View view) {
+            posterView = (ImageView) view.findViewById(R.id.movie_list_item_image_poster);
+        }
+    }
 
     /**
      * This is a custom constructor.
@@ -36,22 +47,25 @@ public class MovieAdapter extends ArrayAdapter<MovieItem> {
      */
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        // Gets the Movie object from the ArrayAdapter at the appropriate position
-        MovieItem movie = getItem(position);
+
+        ViewHolder viewHolder;
 
         // Adapters recycle views to AdapterViews.
         // If this is a new View object we're getting, then inflate the layout.
         // If not, this view already has the layout inflated from a previous call to getView,
         // and we modify the View widgets as usual.
         if (convertView == null) {
-            convertView = LayoutInflater.from(getContext()).inflate(
-                    R.layout.movie_list_item, parent, false);
+            convertView = LayoutInflater.from(getContext()).inflate(R.layout.movie_list_item, parent, false);
+            viewHolder = new ViewHolder(convertView);
+            convertView.setTag(viewHolder);
+        } else {
+            viewHolder = (ViewHolder) convertView.getTag();
         }
 
-        ImageView imageView = (ImageView)convertView.findViewById(R.id.movie_list_item_image_poster);
-        imageView.setTag(movie);
-        String imageUrl = MovieItem.IMAGE_BASE_PATH + movie.getPoster_path();
-        Picasso.with(getContext()).load(imageUrl).error(R.drawable.no_image).into(imageView);
+        // Gets the Movie object from the ArrayAdapter at the appropriate position
+        MovieItem movie = getItem(position);
+        String imageUrl = MovieItem.IMAGE_BASE_PATH + movie.getPosterPath();
+        Picasso.with(getContext()).load(imageUrl).error(R.drawable.no_image).into(viewHolder.posterView);
 
         return convertView;
     }

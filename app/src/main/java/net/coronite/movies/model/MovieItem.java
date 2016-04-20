@@ -1,20 +1,26 @@
-package net.coronite.movies;
+package net.coronite.movies.model;
 
 
+import android.database.Cursor;
 import android.os.Parcel;
 import android.os.Parcelable;
+
+import net.coronite.movies.DetailFragment;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * A Movie object with data from themoviedb.org API.
  */
 public class MovieItem implements Parcelable {
     public static final String IMAGE_BASE_PATH = "http://image.tmdb.org/t/p/w185";
-    int id;
-    String poster_path;
-    String title;
-    String overview;
-    String releaseDate;
-    Double voteAverage;
+    private int id;
+    private String posterPath;
+    private String title;
+    private String overview;
+    private String releaseDate;
+    private Double voteAverage;
 
     /**
      * Constructs a MovieItem object.
@@ -28,16 +34,44 @@ public class MovieItem implements Parcelable {
     public MovieItem(int movieId, String posterPath, String title, String overview, String releaseDate, Double voteAverage )
     {
         this.id = movieId;
-        this.poster_path = posterPath;
+        this.posterPath = posterPath;
         this.title = title;
         this.overview = overview;
         this.releaseDate = releaseDate;
         this.voteAverage = voteAverage;
     }
 
+    /**
+     * Constructs a MovieItem object.
+     * @param movie a JSON object for the movie.
+     */
+    public MovieItem(JSONObject movie) throws JSONException {
+        this.id = movie.getInt("id");
+        this.posterPath = movie.getString("poster_path");
+        this.title = movie.getString("original_title");
+        this.overview = movie.getString("overview");
+        this.releaseDate = movie.getString("release_date");
+        this.voteAverage = movie.getDouble("vote_average");
+
+    }
+
+    /**
+     * Constructs a MovieItem object.
+     * @param cursor a cursor for the movie.
+     */
+    public MovieItem(Cursor cursor) {
+        this.id = cursor.getInt(DetailFragment.COL_MOVIE_ID);
+        this.posterPath = cursor.getString(DetailFragment.COL_POSTER);
+        this.title = cursor.getString(DetailFragment.COL_TITLE);
+        this.overview = cursor.getString(DetailFragment.COL_OVERVIEW);
+        this.releaseDate = cursor.getString(DetailFragment.COL_RELEASE_DATE);
+        this.voteAverage = cursor.getDouble(DetailFragment.COL_VOTE_AVERAGE);
+
+    }
+
     private MovieItem(Parcel in){
         id = in.readInt();
-        poster_path = in.readString();
+        posterPath = in.readString();
         title = in.readString();
         overview = in.readString();
         releaseDate = in.readString();
@@ -54,18 +88,47 @@ public class MovieItem implements Parcelable {
     }
 
     /**
-     * @return poster_path from themoviedb.org API.
-     */
-    public String getPoster_path(){
-        return poster_path;
-    }
-
-    /**
      * @return id the movie identifier from themoviedb.org API.
      */
     public int getId() {
         return id;
     }
+
+    /**
+     * @return poster_path from themoviedb.org API.
+     */
+    public String getPosterPath(){
+        return posterPath;
+    }
+
+    /**
+     * @return title from themoviedb.org API.
+     */
+    public String getTitle(){
+        return title;
+    }
+
+    /**
+     * @return overview from themoviedb.org API.
+     */
+    public String getOverview(){
+        return overview;
+    }
+
+    /**
+     * @return release_date from themoviedb.org API.
+     */
+    public String getReleaseDate(){
+        return releaseDate;
+    }
+
+    /**
+     * @return vote_average from themoviedb.org API.
+     */
+    public Double getVoteAverage(){
+        return voteAverage;
+    }
+
 
     /**
      * Flatten this object into a Parcel.
@@ -75,7 +138,7 @@ public class MovieItem implements Parcelable {
     @Override
     public void writeToParcel(Parcel parcel, int i) {
         parcel.writeInt(id);
-        parcel.writeString(poster_path);
+        parcel.writeString(posterPath);
         parcel.writeString(title);
         parcel.writeString(overview);
         parcel.writeString(releaseDate);

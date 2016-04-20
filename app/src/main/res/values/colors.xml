@@ -9,4 +9,5 @@
 
     <!-- colors -->
     <color name="teal">#009688</color>
+    <color name="teal_200">#80CBC4</color>
 </resources>

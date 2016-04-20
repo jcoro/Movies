@@ -1,40 +1,44 @@
 package net.coronite.movies;
 
-import android.app.ProgressDialog;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.net.Uri;
-import android.os.AsyncTask;
+import android.database.Cursor;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
-import android.util.Log;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import net.coronite.movies.adapters.MovieAdapter;
+import net.coronite.movies.data.MovieContract;
+import net.coronite.movies.callbacks.AsyncTaskCompleteListener;
+import net.coronite.movies.callbacks.DetailFragmentCallback;
+import net.coronite.movies.model.MovieItem;
+import net.coronite.movies.tasks.FetchMoviesTask;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collections;
 
 /**
  * Encapsulates fetching the movie data and displaying its poster image in a {@link GridView} layout.
  */
-public class MovieFragment extends Fragment {
+public class MovieFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
 
     private MovieAdapter mMovieAdapter;
     private ArrayList<MovieItem> movieList;
+    private static final int MOVIE_LOADER = 0;
+
+    private static final String[] MOVIE_COLUMNS = {
+            MovieContract.MovieEntry._ID,
+            MovieContract.MovieEntry.COLUMN_MOVIE_ID,
+            MovieContract.MovieEntry.COLUMN_MOVIE_TITLE,
+            MovieContract.MovieEntry.COLUMN_POSTER_PATH,
+            MovieContract.MovieEntry.COLUMN_OVERVIEW,
+            MovieContract.MovieEntry.COLUMN_RELEASE_DATE,
+            MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE,
+    };
 
     public MovieFragment() {
     }
@@ -48,8 +52,7 @@ public class MovieFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView =  inflater.inflate(R.layout.fragment_main, container, false);
 
         mMovieAdapter = new MovieAdapter(getActivity());
@@ -62,9 +65,9 @@ public class MovieFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 MovieItem clickedMovie = mMovieAdapter.getItem(i);
-                Intent intent = new Intent(getActivity(), DetailActivity.class)
-                        .putExtra("movie", clickedMovie);
-                startActivity(intent);
+
+                // Send the MovieItem to the .onItemSelected() method of the parent activity (i.e., MainActivity).
+                ((DetailFragmentCallback) getActivity()).onItemSelected(clickedMovie);
 
             }
         });
@@ -75,8 +78,10 @@ public class MovieFragment extends Fragment {
         }
         // If the movie data HAS already been fetched...
         else {
+
             movieList = savedInstanceState.getParcelableArrayList("movies");
             if (movieList != null) {
+
                 for (MovieItem movie : movieList) {
                     mMovieAdapter.add(movie);
                 }
@@ -93,167 +98,81 @@ public class MovieFragment extends Fragment {
     }
 
     private void updateMovies() {
-        FetchMovieTask movieTask = new FetchMovieTask();
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        String sortBy = prefs.getString(getString(R.string.pref_sort_by_key),
-                getString(R.string.pref_sort_by_value_popular));
-        movieTask.execute(sortBy);
+
+        String sortBy = Utility.getSortByPreference(getActivity());
+
+        FetchMoviesTaskCompleteListener mMoviesListener = new FetchMoviesTaskCompleteListener();
+
+        if (sortBy.equals(getString(R.string.pref_sort_by_value_favorite))) {
+            getLoaderManager().initLoader(MOVIE_LOADER, null, this);
+        }
+        else {
+            new FetchMoviesTask(mMoviesListener).execute(sortBy);
+        }
     }
 
-    public class FetchMovieTask extends AsyncTask<String, Void, MovieItem[]> {
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+    }
 
-        private final String LOG_TAG = FetchMovieTask.class.getSimpleName();
+    void onSortByChanged( ) {
+        updateMovies();
+    }
 
-        //Show a dialog to let the user know the movie data is loading.
-        private ProgressDialog dialog = new ProgressDialog(getActivity());
-
-        /**
-         * Take the String representing the movie data in JSON Format and
-         * pull out the data we need for the detail view.
-         *
-         */
-        private MovieItem[] getMovieDataFromJson(String movieJsonStr)
-                throws JSONException {
-
-            // JSON objects that need to be extracted.
-            final String RESULTS = "results";
-            final String ID = "id";
-            final String POSTER_PATH = "poster_path";
-            final String TITLE = "title";
-            final String OVERVIEW = "overview";
-            final String RELEASE_DATE = "release_date";
-            final String VOTE_AVERAGE = "vote_average";
-
-            JSONObject movieJson = new JSONObject(movieJsonStr);
-            JSONArray resultsArray = movieJson.getJSONArray(RESULTS);
-
-            MovieItem[] movieResults = new MovieItem[resultsArray.length()];
-
-            for(int i = 0; i < resultsArray.length(); i++) {
-
-                // Get the JSON object representing the movie
-                JSONObject singleMovie = resultsArray.getJSONObject(i);
-
-                int id = singleMovie.getInt(ID);
-                String posterPath = singleMovie.getString(POSTER_PATH);
-                String title = singleMovie.getString(TITLE);
-                String overview = singleMovie.getString(OVERVIEW);
-                String releaseDate = singleMovie.getString(RELEASE_DATE);
-                Double voteAverage = singleMovie.getDouble(VOTE_AVERAGE);
-
-                movieResults[i] = new MovieItem(id, posterPath, title, overview, releaseDate, voteAverage );
-            }
-            return movieResults;
-        }
+    public class FetchMoviesTaskCompleteListener implements AsyncTaskCompleteListener<ArrayList<MovieItem>>
+    {
 
         @Override
-        protected void onPreExecute() {
-            // Show the dialog while the movie data is loading.
-            this.dialog.setMessage("Movie Data Is Downloading...");
-            this.dialog.show();
-        }
-
-        @Override
-        protected MovieItem[] doInBackground(String... params) {
-
-            // doInBackground takes the sortBy string given to execute()
-
-            // These two need to be declared outside the try/catch
-            // so that they can be closed in the finally block.
-            HttpURLConnection urlConnection = null;
-            BufferedReader reader = null;
-
-            // Will contain the raw JSON response as a string.
-            String theMovieJsonStr = null;
-
-            try {
-                // Construct the URL for the moviedb.org query
-                final String MOVIEDB_BASE_URL = "http://api.themoviedb.org/3/discover/movie?";
-                final String SORT_BY = "sort_by";
-                final String APPID_PARAM = "api_key";
-
-                Uri builtUri = Uri.parse(MOVIEDB_BASE_URL).buildUpon()
-                        .appendQueryParameter(SORT_BY, params[0])
-                        .appendQueryParameter(APPID_PARAM, BuildConfig.THE_MOVIE_DB_API_KEY)
-                        .build();
-
-                URL url = new URL(builtUri.toString());
-
-                // Create the request to themoviedb, and open the connection
-                urlConnection = (HttpURLConnection) url.openConnection();
-                urlConnection.setRequestMethod("GET");
-                urlConnection.connect();
-
-                // Read the input stream into a String
-                InputStream inputStream = urlConnection.getInputStream();
-                StringBuilder builder = new StringBuilder();
-                if (inputStream == null) {
-                    // Nothing to do.
-                    return null;
-                }
-                reader = new BufferedReader(new InputStreamReader(inputStream));
-
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    // Since it's JSON, adding a newline isn't necessary (it won't affect parsing)
-                    // But it does make debugging a *lot* easier if you print out the completed
-                    // builder for debugging.
-                    builder.append(line).append("\n");
-                }
-
-                if (builder.length() == 0) {
-                    // Stream was empty.  No point in parsing.
-
-                    return null;
-                }
-                theMovieJsonStr = builder.toString();
-
-            } catch (IOException e) {
-                Log.e(LOG_TAG, "Error ", e);
-                // If the code didn't successfully get the movie data, there's no point in attempting
-                // to parse it.
-                return null;
-            } finally {
-                if (urlConnection != null) {
-                    urlConnection.disconnect();
-                }
-                if (reader != null) {
-                    try {
-                        reader.close();
-                    } catch (final IOException e) {
-                        Log.e(LOG_TAG, "Error closing stream", e);
-                    }
-                }
-            }
-
-            try {
-                return getMovieDataFromJson(theMovieJsonStr);
-            } catch (JSONException e) {
-                Log.e(LOG_TAG, e.getMessage(), e);
-                e.printStackTrace();
-            }
-
-            // This will only happen if there was an error getting or parsing the forecast.
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(MovieItem[] result) {
-            // dismiss the dialog when the data is done loading.
-            if (dialog.isShowing()) {
-                dialog.dismiss();
-            }
-            if (result != null) {
-                if (mMovieAdapter != null) {
-                    mMovieAdapter.clear();
-                    for (MovieItem movie : result) {
-                        mMovieAdapter.add(movie);
-                    }
-                    movieList = new ArrayList<>();
-                    Collections.addAll(movieList, result);
-                }
+        public void onTaskComplete(ArrayList<MovieItem> result)
+        {
+            if (result != null && mMovieAdapter != null) {
+                mMovieAdapter.clear();
+                mMovieAdapter.addAll(result);
+                movieList = result;
+            } else {
+                updateMovies();
             }
         }
+    }
+
+    public void setMovieData(ArrayList<MovieItem> result){
+        if (mMovieAdapter != null) {
+            mMovieAdapter.clear();
+            for (MovieItem movie : result) {
+                mMovieAdapter.add(movie);
+            }
+            movieList = result;
+        }
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        return new CursorLoader(
+                getActivity(),                                      // context
+                MovieContract.MovieEntry.CONTENT_URI,               // uri
+                MOVIE_COLUMNS,                                      // projection
+                null,                                               // selection
+                null,                                               // seletionArgs
+                null                                                // sort order
+        );
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+        ArrayList<MovieItem> results = new ArrayList<>();
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                MovieItem movie = new MovieItem(cursor);
+                results.add(movie);
+            } while (cursor.moveToNext());
+        }
+        setMovieData(results);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
 
     }
 }
+

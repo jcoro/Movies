@@ -5,6 +5,17 @@
     <string name="movie_poster_image">Movie Poster Image</string>
     <string name="divider">Divider</string>
     <string name="movie_list_item_description">Movie Poster View</string>
+    <string name="trailers_heading">Trailers:</string>
+    <string name="reviews_heading">Reviews:</string>
+    <string name="add_to_favorites">Add To Favorites</string>
+    <string name="remove_from_favorites">Remove From Favorites</string>
+    <string name="movie_removed">Movie Removed From Favorites</string>
+    <string name="movie_added">Movie Added To Favorites</string>
+    <string name="content_authority">net.coronite.movies</string>
+    <string name="no_reviews">No Reviews Available</string>
+    <string name="no_trailers">No Trailers Available</string>
+    <string name="movie_icon_description">Movie Trailer Icon</string>
+    <string name="action_share">Share</string>
 
     <!-- Strings related to Settings -->
 
@@ -17,9 +28,11 @@
     <!-- Values for sort by preferences [CHAR LIMIT=NONE] -->
     <string name="pref_sort_by_value_popular" translatable="false">popularity.desc</string>
     <string name="pref_sort_by_value_highest_rated" translatable="false">vote_average.desc</string>
+    <string name="pref_sort_by_value_favorite" translatable="false">favorite</string>
 
     <string name="pref_sort_by_label_popular" translatable="false">Popularity</string>
     <string name="pref_sort_by_label_highest_rated" translatable="false">Highest Rated</string>
+    <string name="pref_sort_by_label_favorite" translatable="false">Favorite</string>
 
     <!-- Example General settings -->
     <string name="pref_header_general">General</string>

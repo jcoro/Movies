@@ -1,58 +1,124 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/detail_text"
+    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".DetailFragment"
-    >
+    android:layout_height="wrap_content"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:paddingBottom="50dp">
 
-    <TextView
-        android:id="@+id/detail_movie_title"
+    <LinearLayout android:focusable="true"
+        android:focusableInTouchMode="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        style="@style/DetailTitleText"
-        />
+        android:orientation="vertical"
+        >
 
-        <ImageView
-            android:id="@+id/detail_movie_image"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/detail_movie_title"
-            android:contentDescription="@string/movie_poster_image"
-            style="@style/DetailMoviePosterImage"
-            />
         <TextView
-            android:id="@+id/detail_movie_release_year"
+            android:id="@+id/detail_movie_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/detail_movie_title"
-            android:layout_toRightOf="@id/detail_movie_image"
-            android:layout_toEndOf="@id/detail_movie_image"
-            style="@style/DetailMovieReleaseYearText"
+            style="@style/DetailTitleText"
             />
-        <TextView
-            android:id="@+id/detail_movie_rating"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/detail_movie_release_year"
-            android:layout_toRightOf="@id/detail_movie_image"
-            android:layout_toEndOf="@id/detail_movie_image"
-            style="@style/DetailMovieRatingText"
-            />
-        <TextView
-            android:id="@+id/detail_movie_overview"
+
+        <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/detail_movie_image"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/movie_poster_image"
+                    style="@style/DetailMoviePosterImage"
+                    />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/detail_movie_release_year"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        style="@style/DetailMovieReleaseYearText"
+                        />
+
+                    <TextView
+                        android:id="@+id/detail_movie_rating"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        style="@style/DetailMovieRatingText"
+                        />
+                    <Button
+                        android:id="@+id/detail_movie_favorite_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        style="@style/FavoriteButton"
+                        />
+
+                </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/detail_movie_image"
-            style="@style/DetailMovieOverviewText"
-            />
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/spacing_single"
-            android:layout_below="@id/detail_movie_overview"
-            android:contentDescription="@string/divider"
-            style="@style/Divider"
-            />
-</RelativeLayout>
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/detail_movie_overview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/DetailMovieOverviewText"
+                />
+
+            <ImageView
+                android:id="@+id/detail_movie_divider"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/spacing_single"
+                android:contentDescription="@string/divider"
+                style="@style/Divider"
+                />
+
+            <TextView
+                android:id="@+id/detail_movie_reviews_header"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                style="@style/DetailMovieTrailersHeader"
+                android:text="@string/reviews_heading"
+                />
+
+            <ListView
+                android:id="@+id/listview_reviews"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/reviews_list_view_height"
+                style="@style/TrailersListStyle"
+                android:nestedScrollingEnabled="true"
+                />
+
+            <TextView
+                android:id="@+id/detail_movie_trailers_header"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/DetailMovieTrailersHeader"
+                android:text="@string/trailers_heading"
+                />
+
+            <ListView
+                android:id="@+id/listview_trailers"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/trailers_list_view_height"
+                style="@style/TrailersListStyle"
+                android:nestedScrollingEnabled="true"
+                />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</ScrollView>
+

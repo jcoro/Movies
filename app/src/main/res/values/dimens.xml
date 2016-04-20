@@ -6,11 +6,15 @@
     <dimen name="font_small">12sp</dimen>
 
     <!-- typical spacing (margins and padding) -->
-    <dimen name="spacing_huge">40dp</dimen>
+    <dimen name="spacing_xxlarge">60dp</dimen>
+    <dimen name="spacing_xlarge">40dp</dimen>
     <dimen name="spacing_large">24dp</dimen>
     <dimen name="spacing_normal">16dp</dimen>
     <dimen name="spacing_small">8dp</dimen>
     <dimen name="spacing_tiny">4dp</dimen>
     <dimen name="spacing_single">1dp</dimen>
     <dimen name="spacing_none">0dp</dimen>
+
+    <dimen name="trailers_list_view_height">150dp</dimen>
+    <dimen name="reviews_list_view_height">300dp</dimen>
 </resources>
