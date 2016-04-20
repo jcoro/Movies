@@ -67,7 +67,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     private ListView mReviewsListView;
     private ShareActionProvider mShareActionProvider;
     static final String DETAIL_MOVIE = "movie";
-    static final String TRAILER_LINK = "http://www.youtube.com/watch?v=";
+    private static final String TRAILER_LINK = "http://www.youtube.com/watch?v=";
 
     private static final int MOVIE_LOADER = 0;
 

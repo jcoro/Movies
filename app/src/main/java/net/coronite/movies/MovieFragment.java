@@ -111,11 +111,6 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
         }
     }
 
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-    }
-
     void onSortByChanged( ) {
         updateMovies();
     }
