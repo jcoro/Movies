@@ -1,7 +1,7 @@
 # Movies App
 This App is Projects 1 & 2 for the Udacity Android Developer Nanodegree. The Movies App showcases Gridviews, SQLite Databases, Content Providers, AsyncTasks, Parcelables, Intents, and Master-Detail Fragment Interfaces.
 
-![Movies App](http://www.coronite.net/assets/img/github/project1-2.png)
+![Movies App](http://www.coronite.net/assets/img/github/project1-2.jpg)
 
 ## Android Features Implemented:
 
