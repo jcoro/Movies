@@ -162,11 +162,16 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
                         try {
                             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + trailer.getKey()));
-                            startActivity(intent);
+                            // Verify that the intent will resolve to an activity
+                            if (intent.resolveActivity(getPackageManager()) != null) {
+                                startActivity(intent);
+                            }
                         } catch (ActivityNotFoundException ex) {
                             Intent intent = new Intent(Intent.ACTION_VIEW,
                                     Uri.parse(TRAILER_LINK + trailer.getKey()));
-                            startActivity(intent);
+                            if (intent.resolveActivity(getPackageManager()) != null) {
+                                startActivity(intent);
+                            }
                         }
                     }
                 });
